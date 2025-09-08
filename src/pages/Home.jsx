@@ -6,7 +6,6 @@ import eventData from "../data/randomEvent.json";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { el } from "date-fns/locale";
 
 // 自訂 Marker 圖示
 const customIcon = new L.Icon({
@@ -36,6 +35,7 @@ function Home() {
   const [startDate, endDate] = dateRange;
   const filterRef = useRef(null);
   const cardRefs = useRef({});
+  const sliderRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -53,6 +53,16 @@ function Home() {
     setClickedLatLng(latlng);
     setShowClickPopup(true);
     setTimeout(() => setShowClickPopup(false), 3000); // 3秒後自動關閉
+  };
+
+  const scrollSlider = (direction) => {
+    if (sliderRef.current) {
+      const scrollAmount = 300; // 每次移動 300px
+      sliderRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -141,6 +151,18 @@ function Home() {
               key={event.id}
               position={[event.latitude, event.longitude]}
               icon={customIcon}
+              eventHandlers={{
+                click: () => {
+                  const card = cardRefs.current[event.id];
+                  if (card) {
+                    card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+                    card.classList.add("highlight-card");
+                    setTimeout(() => {
+                      card.classList.remove("highlight-card");
+                    }, 2000);
+                  }
+                },
+              }}
             >
               <Tooltip direction="top" offset={[0, -20]} opacity={1}>
                 <div>
@@ -149,47 +171,42 @@ function Home() {
                   {event.address}
                 </div>
               </Tooltip>
-
-              onClick={() => {
-                const card = cardRefs.current[event.id];
-                if (card) {
-                  card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-
-                  // 加強顯示動畫（加 class）
-                  card.classList.add("highlight-card");
-
-                  // 移除動畫 class（延遲一點）
-                  setTimeout(() => {
-                    card.classList.remove("highlight-card");
-                  }, 2000);
-                }
-              }}
-
             </Marker>
           ))}
-
-          
         </MapContainer>
-    
+
         {/* 地圖下方滑動活動資訊 */}
-        <div className="event-slider">
-          {eventData.map((event) => (
-            <div
-              key={event.id}
-              ref={(el) => (cardRefs.current[event.id] = el)}
-              className="event-card"
-            >
-              <div className="event-name">{event.name}</div>
-              <div className="event-info">地址：{event.address}</div>
-              <div className="event-info">
-                日期：
-                {event.days && event.days.length > 0
-                  ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
-                  : "未提供"}
+        <div className="event-slider-container">
+          {/* 左箭頭 */}
+          <button className="slider-arrow left" onClick={() => scrollSlider("left")}>
+            ◀
+          </button>
+
+          {/* 卡片滾動區域 */}
+          <div className="event-slider" ref={sliderRef}>
+            {eventData.map((event) => (
+              <div
+                key={event.id}
+                ref={(el) => (cardRefs.current[event.id] = el)}
+                className="event-card"
+              >
+                <div className="event-name">{event.name}</div>
+                <div className="event-info">地址：{event.address}</div>
+                <div className="event-info">
+                  日期：
+                  {event.days && event.days.length > 0
+                    ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
+                    : "未提供"}
+                </div>
+                <div className="event-info">內容：{event.content}</div>
               </div>
-              <div className="event-info">內容：{event.content}</div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* 右箭頭 */}
+          <button className="slider-arrow right" onClick={() => scrollSlider("right")}>
+            ▶
+          </button>
         </div>
       </div>
     </div>

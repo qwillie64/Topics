@@ -195,20 +195,59 @@
   flex: 1;
 }
 
-/* ===== 活動資訊滑動區塊 ===== */
-.event-slider {
+/* ===== 活動資訊滑動容器（⭐新增，為了定位箭頭） ===== */
+.event-slider-container {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
+  width: 90%;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 活動資訊滑動區塊 ===== */
+.event-slider {
   display: flex;
   overflow-x: auto;
   gap: 16px;
   padding: 10px 20px;
-  width: 90%;
   border-radius: 12px;
-  z-index: 999;
+  width: 100%;
   scrollbar-width: none; /* Firefox 隱藏滾動條 */
+}
+
+.event-slider::-webkit-scrollbar {
+  display: none; /* Chrome/Edge 隱藏滾動條 */
+}
+
+/* ===== 左右箭頭樣式（⭐改成懸浮透明，垂直置中） ===== */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.slider-arrow:hover {
+  color: #000;
+}
+
+.slider-arrow.left {
+  left: -50px;
+}
+
+.slider-arrow.right {
+  right: -50px;
 }
 
 /* 單一活動卡片 */
