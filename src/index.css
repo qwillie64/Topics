@@ -1,0 +1,95 @@
+/* 全局樣式 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 登入/註冊容器 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+/* 表單樣式 */
+.form-wrapper {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  /* 增加高度讓標題有空間 */
+  min-height: 500px;
+}
+
+/* 標題樣式 - 活動地圖 */
+.form-title-large {
+  text-align: center;
+  color: #722ed1;
+  font-size: 64px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* 標題樣式 - 登入/註冊 */
+.form-title {
+  text-align: center;
+  color: #722ed1;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* 輸入框樣式 */
+.ant-input,
+.ant-input-password {
+  border-radius: 6px !important;
+}
+
+/* 按鈕樣式 */
+.ant-btn {
+  border-radius: 6px !important;
+  font-size: 16px !important;
+}
+
+.ant-btn-primary {
+  background-color: #722ed1 !important;
+  border-color: #722ed1 !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #531dab !important;
+  border-color: #531dab !important;
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .form-wrapper {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 769px) {
+  .form-wrapper {
+    width: 400px;
+  }
+}
+

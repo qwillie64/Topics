@@ -165,12 +165,37 @@ function Home() {
               }}
             >
               <Tooltip direction="top" offset={[0, -20]} opacity={1}>
-                <div>
-                  <strong>{event.name}</strong><br />
-                  {event.content}<br />
-                  {event.address}
-                </div>
-              </Tooltip>
+  <div>
+    <strong>{event.name}</strong><br />
+    🗓 {event.days && event.days.length > 0
+      ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
+      : "未提供"}<br />
+    📍 {event.address}<br />
+    📖 {event.content}<br />
+    {/* 🎫 活動標籤 */}
+    {event.tag && (
+      <span
+        style={{
+          display: "inline-block",
+          marginTop: "5px",
+          padding: "2px 6px",
+          backgroundColor:
+            event.tag === "演唱會" ? "#dc3545" : // 紅
+            event.tag === "市集" ? "#28a745" :   // 綠
+            event.tag === "展覽" ? "#007bff" :   // 藍
+            "#6c757d", // 預設灰
+          color: "white",
+          borderRadius: "6px",
+          fontSize: "12px"
+        }}
+      >
+        {event.tag}
+      </span>
+    )}
+  </div>
+</Tooltip>
+
+
             </Marker>
           ))}
         </MapContainer>
@@ -191,14 +216,35 @@ function Home() {
                 className="event-card"
               >
                 <div className="event-name">{event.name}</div>
-                <div className="event-info">地址：{event.address}</div>
-                <div className="event-info">
-                  日期：
-                  {event.days && event.days.length > 0
-                    ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
-                    : "未提供"}
-                </div>
-                <div className="event-info">內容：{event.content}</div>
+  <div className="event-info">地址：{event.address}</div>
+  <div className="event-info">
+    日期：
+    {event.days && event.days.length > 0
+      ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
+      : "未提供"}
+  </div>
+  <div className="event-info">內容：{event.content}</div>
+  
+  {/* 🎫 活動標籤 */}
+  {event.tag && (
+    <span
+      style={{
+        display: "inline-block",
+        marginTop: "5px",
+        padding: "2px 6px",
+        backgroundColor:
+          event.tag === "演唱會" ? "#dc3545" :
+          event.tag === "市集" ? "#28a745" :
+          event.tag === "展覽" ? "#007bff" :
+          "#6c757d",
+        color: "white",
+        borderRadius: "6px",
+        fontSize: "12px"
+      }}
+    >
+      {event.tag}
+    </span>
+  )}
               </div>
             ))}
           </div>
