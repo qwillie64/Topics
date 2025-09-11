@@ -1,9 +1,9 @@
-import { MapContainer, TileLayer, Marker, Tooltip, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip, } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "../styles/Home.css";
-import eventData from "../data/randomEvent.json";
 import { useEffect, useRef, useState } from "react";
+import { getEvents } from "../api/events"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -15,15 +15,23 @@ const customIcon = new L.Icon({
 });
 
 // 用於點擊地圖取得座標的組件
-function ClickMarker({ onClickMap }) {
-  useMapEvents({
-    click(e) {
-      onClickMap(e.latlng);
-    },
-  });
-  return null;
-}
 
+
+function normalizeEvent(e) {
+  const lat = Number(e.latitude ?? e.lat ?? e?.location?.lat ?? e?.geo?.lat);
+  const lng = Number(e.longitude ?? e.lng ?? e.lon ?? e?.location?.lng ?? e?.geo?.lng);
+  return {
+    id: e.id ?? e.uuid ?? e._id ?? `${lat},${lng}`,
+    name: e.name ?? e.title ?? "未命名活動",
+    address: e.address ?? e.location?.address ?? e.place ?? "未提供",
+    content: e.content ?? e.description ?? "",
+    start: e.start ?? e.startDate ?? e?.days?.[0]?.start ?? "",
+    end:   e.end   ?? e.endDate   ?? e?.days?.[0]?.end   ?? "",
+    date:  e.date  ?? e?.days?.[0]?.date ?? "",
+    tag:   e.tag ?? e.categoryName ?? e.type,
+    _lat: lat, _lng: lng,
+  };
+}
 function Home() {
   const [events, setEvents] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -36,23 +44,23 @@ function Home() {
   const filterRef = useRef(null);
   const cardRefs = useRef({});
   const sliderRef = useRef(null);
+  const mapRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
-        setOpenFilter(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+useEffect(() => {
+  getEvents()
+    .then((data) => {
+      const raw = Array.isArray(data) ? data : (data?.items ?? data?.data ?? []);
+      const normalized = (raw ?? []).map(normalizeEvent)
+        .filter(e => Number.isFinite(e._lat) && Number.isFinite(e._lng));
+      setEvents(normalized);
+    })
+    .catch((e) => { console.error("getEvents error:", e); setEvents([]); });
+}, []);
 
-  const handleMapClick = (latlng) => {
+ const handleMapClick = (latlng) => {
     setClickedLatLng(latlng);
     setShowClickPopup(true);
-    setTimeout(() => setShowClickPopup(false), 3000); // 3秒後自動關閉
+    setTimeout(() => setShowClickPopup(false), 3000);
   };
 
   const scrollSlider = (direction) => {
@@ -134,71 +142,34 @@ function Home() {
         </div>
 
         {/* 地圖 */}
-        <MapContainer
-          center={[25.033964, 121.564468]}
-          zoom={13}
-          style={{ height: "80vh", width: "100%" }}
-          className="map"
-        >
-          <TileLayer
-            attribution='&copy; OpenStreetMap'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <ClickMarker onClickMap={handleMapClick} />
+<MapContainer
+  center={[25.033964, 121.564468]}
+  zoom={13}
+  style={{ height: "80vh", width: "100%" }}
+  className="map"
+  whenCreated={(map) => {
+    map.on("click", (e) => handleMapClick(e.latlng));
+  }}
+>
+  <TileLayer
+    attribution="&copy; OpenStreetMap"
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
 
-          {eventData.map((event) => (
-            <Marker
-              key={event.id}
-              position={[event.latitude, event.longitude]}
-              icon={customIcon}
-              eventHandlers={{
-                click: () => {
-                  const card = cardRefs.current[event.id];
-                  if (card) {
-                    card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-                    card.classList.add("highlight-card");
-                    setTimeout(() => {
-                      card.classList.remove("highlight-card");
-                    }, 2000);
-                  }
-                },
-              }}
-            >
-              <Tooltip direction="top" offset={[0, -20]} opacity={1}>
-  <div>
-    <strong>{event.name}</strong><br />
-    🗓 {event.days && event.days.length > 0
-      ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
-      : "未提供"}<br />
-    📍 {event.address}<br />
-    📖 {event.content}<br />
-    {/* 🎫 活動標籤 */}
-    {event.tag && (
-      <span
-        style={{
-          display: "inline-block",
-          marginTop: "5px",
-          padding: "2px 6px",
-          backgroundColor:
-            event.tag === "演唱會" ? "#dc3545" : // 紅
-            event.tag === "市集" ? "#28a745" :   // 綠
-            event.tag === "展覽" ? "#007bff" :   // 藍
-            "#6c757d", // 預設灰
-          color: "white",
-          borderRadius: "6px",
-          fontSize: "12px"
-        }}
-      >
-        {event.tag}
-      </span>
-    )}
-  </div>
-</Tooltip>
-
-
-            </Marker>
-          ))}
-        </MapContainer>
+  {events.map((event) => (
+    <Marker key={event.id} position={[event._lat, event._lng]} icon={customIcon}>
+      <Tooltip direction="top" offset={[0, -20]} opacity={1}>
+        <div>
+          <strong>{event.name}</strong><br />
+          🗓 {event.date ? `${event.date} ${event.start || ""} - ${event.end || ""}`
+                         : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}<br />
+          📍 {event.address}<br />
+          📖 {event.content}
+        </div>
+      </Tooltip>
+    </Marker>
+  ))}
+</MapContainer>
 
         {/* 地圖下方滑動活動資訊 */}
         <div className="event-slider-container">
@@ -208,46 +179,38 @@ function Home() {
           </button>
 
           {/* 卡片滾動區域 */}
-          <div className="event-slider" ref={sliderRef}>
-            {eventData.map((event) => (
-              <div
-                key={event.id}
-                ref={(el) => (cardRefs.current[event.id] = el)}
-                className="event-card"
-              >
-                <div className="event-name">{event.name}</div>
-  <div className="event-info">地址：{event.address}</div>
-  <div className="event-info">
-    日期：
-    {event.days && event.days.length > 0
-      ? `${event.days[0].date} ${event.days[0].start} - ${event.days[0].end}`
-      : "未提供"}
-  </div>
-  <div className="event-info">內容：{event.content}</div>
-  
-  {/* 🎫 活動標籤 */}
-  {event.tag && (
-    <span
-      style={{
-        display: "inline-block",
-        marginTop: "5px",
-        padding: "2px 6px",
-        backgroundColor:
-          event.tag === "演唱會" ? "#dc3545" :
-          event.tag === "市集" ? "#28a745" :
-          event.tag === "展覽" ? "#007bff" :
-          "#6c757d",
-        color: "white",
-        borderRadius: "6px",
-        fontSize: "12px"
-      }}
+          {/* 卡片滑軌 */}
+<div className="event-slider" ref={sliderRef}>
+  {events.map((event) => (
+    <div
+      key={event.id}
+      ref={(el) => (cardRefs.current[event.id] = el)}
+      className="event-card"
     >
-      {event.tag}
-    </span>
-  )}
-              </div>
-            ))}
-          </div>
+      <div className="event-name">{event.name}</div>
+      <div className="event-info">地址：{event.address}</div>
+      <div className="event-info">
+        日期：
+        {event.date
+          ? `${event.date} ${event.start || ""} - ${event.end || ""}`
+          : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}
+      </div>
+      <div className="event-info">內容：{event.content}</div>
+      {event.tag && (
+        <span style={{
+          display:"inline-block", marginTop:5, padding:"2px 6px",
+          backgroundColor: event.tag==="演唱會" ? "#dc3545" :
+                           event.tag==="市集" ? "#28a745" :
+                           event.tag==="展覽" ? "#007bff" : "#6c757d",
+          color:"#fff", borderRadius:6, fontSize:12
+        }}>
+          {event.tag}
+        </span>
+      )}
+    </div>
+  ))}
+</div>
+
 
           {/* 右箭頭 */}
           <button className="slider-arrow right" onClick={() => scrollSlider("right")}>

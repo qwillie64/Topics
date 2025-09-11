@@ -1,10 +1,15 @@
+/* app.css */
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 0;
+  padding: 0;          /* 取消外距，讓地圖貼齊 */
+  max-width: none;     /* 取消 1280 限制 */
+  height: 100vh;       /* 讓版面撐滿視窗高度 */
+  text-align: initial; /* 不要全域置中，避免 UI 被擠壓 */
 }
 
+/* 以下保留你原本的範例樣式（logo/card 等），
+   不影響 Home 版面，需要就留、不要就刪。 */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -17,26 +22,12 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
-
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  a:nth-of-type(2) .logo { animation: logo-spin infinite 20s linear; }
 }
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
+.card { padding: 2em; }
+.read-the-docs { color: #888; }

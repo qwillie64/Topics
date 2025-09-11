@@ -32,23 +32,13 @@ const sampleLocations = [
 export default function MapView() {
   return (
     <div className="map-container">
-      <MapContainer center={[25.0340, 121.5645]} zoom={15} style={{ height: "100%", width: "100%" }}>
-        {/* 地圖圖層：OpenStreetMap */}
-        <TileLayer
-          attribution='&copy; OpenStreetMap'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+     <MapContainer center={[25.033964, 121.564468]} zoom={13} style={{ height: "80vh", width: "100%" }}>
+  <TileLayer
+    attribution="&copy; OpenStreetMap"
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
+</MapContainer>
 
-        {/* 根據資料建立 Marker（點擊顯示資訊） */}
-        {sampleLocations.map((location) => (
-          <Marker key={location.id} position={[location.lat, location.lng]}>
-            <Popup>
-              <strong>{location.name}</strong><br />
-              {location.description}
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
     </div>
   );
 }
