@@ -1,0 +1,98 @@
+/* =========================
+   Settings 頁（設定頁面）
+   ========================= */
+
+/* [整體容器]：包住整個設定頁內容 */
+.settings-container {
+    padding: 24px;
+    max-width: 600px;   /* 限制整體寬度，讓欄位不會太寬 */
+    margin: 0 auto;
+  }
+  
+  /* [卡片]：每個區段（基本資料、申請主辦方 CTA）外框 */
+  .settings-card {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  
+  /* [卡片標題]：各區段的 h2 標題 */
+  .settings-card h2 {
+    margin: 0 0 12px;
+  }
+  
+  /* [條列容器]：基本資料採一行一項的直向排列 */
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 欄位間距 */
+  }
+  
+  /* [單一條目]：每一行的資料外層 */
+  .settings-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* [欄位標籤]：「暱稱 / Email / 電話 / 目前身分」等標籤 */
+  .settings-label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 4px;
+  }
+  
+  /* [輸入框樣式]：唯讀欄位用於顯示使用者資料 */
+  .settings-input {
+    width: 100%;
+    max-width: 400px;   /* 單一輸入框最大寬度（縮短一點） */
+    padding: 8px 10px;  /* 內距縮小，整體更緊湊 */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f9f9f9; /* 灰底表示唯讀 */
+  }
+  
+  /* [狀態標籤]：顯示「已通過 / 審核中 / 未通過 / 尚未申請」 */
+  .settings-status {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .settings-status.approved {  /* 狀態：已通過 */
+    background: #e9f9ef;
+    color: #1e874b;
+  }
+  .settings-status.pending {   /* 狀態：審核中 */
+    background: #fff5e6;
+    color: #a86200;
+  }
+  .settings-status.rejected {  /* 狀態：未通過 */
+    background: #ffe8e6;
+    color: #b22222;
+  }
+  .settings-status.none {      /* 狀態：尚未申請 */
+    background: #f0f2f5;
+    color: #555;
+  }
+  
+  /* [按鈕通用]：「申請成為主辦方」與「查看申請進度」 */
+  .settings-btn {
+    padding: 8px 12px;  /* 按鈕縮小 */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+  }
+  
+  /* [主要按鈕]：紫色實心，用於主要動作（申請） */
+  .settings-btn.primary {
+    background: #6c63ff;
+    color: #fff;
+    border-color: #6c63ff;
+  }
+  .settings-btn.primary:hover {
+    filter: brightness(0.95);
+  }
+  

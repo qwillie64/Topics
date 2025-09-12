@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { getEvents } from "../api/events"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Settings from "./Settings";
+import OrganizerApply from "./Apply";
 
 // 自訂 Marker 圖示
 const customIcon = new L.Icon({
@@ -98,128 +100,137 @@ useEffect(() => {
 
       {/* 主內容區域 */}
       <div className="main-content">
-        {/* 搜尋欄 */}
-        <div className="search-bar">
-          <input type="text" placeholder="搜尋活動..." className="search-input" />
-          <div className="filter-buttons" ref={filterRef}>
-            <div className="filter-group">
-              <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "category" ? null : "category")}>類別</button>
-              {openFilter === "category" && (
-                <div className="filter-dropdown">
-                  <div className="dropdown-option">演唱會</div>
-                  <div className="dropdown-option">市集</div>
-                  <div className="dropdown-option">展覽</div>
-                </div>
-              )}
-            </div>
-            <div className="filter-group">
-              <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "city" ? null : "city")}>城市</button>
-              {openFilter === "city" && (
-                <div className="filter-dropdown">
-                  <div className="dropdown-option">台北</div>
-                  <div className="dropdown-option">新北</div>
-                  <div className="dropdown-option">台中</div>
-                </div>
-              )}
-            </div>
-            <div className="filter-group">
-              <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "date" ? null : "date")}>日期</button>
-              {openFilter === "date" && (
-                <div className="calendar-dropdown">
-                  <DatePicker
-                    selectsRange
-                    startDate={startDate}
-                    endDate={endDate}
-                    onChange={(update) => setDateRange(update)}
-                    isClearable
-                    dateFormat="yyyy/MM/dd"
-                    inline
-                  />
-                </div>
-              )}
+        {activePage === "settings" ? (
+          <Settings onNavigate={(p) => setActivePage(p)} />
+        ) : activePage === "organizerApply" ? (
+          <OrganizerApply onBack={() => setActivePage("settings")} />
+        ) : (
+          <>
+          {/* 搜尋欄 */}
+          <div className="search-bar">
+            <input type="text" placeholder="搜尋活動..." className="search-input" />
+            <div className="filter-buttons" ref={filterRef}>
+              <div className="filter-group">
+                <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "category" ? null : "category")}>類別</button>
+                {openFilter === "category" && (
+                  <div className="filter-dropdown">
+                    <div className="dropdown-option">演唱會</div>
+                    <div className="dropdown-option">市集</div>
+                    <div className="dropdown-option">展覽</div>
+                  </div>
+                )}
+              </div>
+              <div className="filter-group">
+                <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "city" ? null : "city")}>城市</button>
+                {openFilter === "city" && (
+                  <div className="filter-dropdown">
+                    <div className="dropdown-option">台北</div>
+                    <div className="dropdown-option">新北</div>
+                    <div className="dropdown-option">台中</div>
+                  </div>
+                )}
+              </div>
+              <div className="filter-group">
+                <button className="filter-pill" onClick={() => setOpenFilter(openFilter === "date" ? null : "date")}>日期</button>
+                {openFilter === "date" && (
+                  <div className="calendar-dropdown">
+                    <DatePicker
+                      selectsRange
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(update) => setDateRange(update)}
+                      isClearable
+                      dateFormat="yyyy/MM/dd"
+                      inline
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* 地圖 */}
-<MapContainer
-  center={[25.033964, 121.564468]}
-  zoom={13}
-  style={{ height: "80vh", width: "100%" }}
-  className="map"
-  whenCreated={(map) => {
-    map.on("click", (e) => handleMapClick(e.latlng));
-  }}
+          {/* 地圖 */}
+          <MapContainer
+            center={[25.033964, 121.564468]}
+            zoom={13}
+            style={{ height: "80vh", width: "100%" }}
+            className="map"
+            whenCreated={(map) => {
+              map.on("click", (e) => handleMapClick(e.latlng));
+            }}
 >
-  <TileLayer
-    attribution="&copy; OpenStreetMap"
-    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-  />
+            <TileLayer
+              attribution="&copy; OpenStreetMap"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-  {events.map((event) => (
-    <Marker key={event.id} position={[event._lat, event._lng]} icon={customIcon}>
-      <Tooltip direction="top" offset={[0, -20]} opacity={1}>
-        <div>
-          <strong>{event.name}</strong><br />
-          🗓 {event.date ? `${event.date} ${event.start || ""} - ${event.end || ""}`
-                         : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}<br />
-          📍 {event.address}<br />
-          📖 {event.content}
-        </div>
-      </Tooltip>
-    </Marker>
-  ))}
-</MapContainer>
+            {events.map((event) => (
+              <Marker key={event.id} position={[event._lat, event._lng]} icon={customIcon}>
+                <Tooltip direction="top" offset={[0, -20]} opacity={1}>
+                  <div>
+                    <strong>{event.name}</strong><br />
+                      🗓 {event.date ? `${event.date} ${event.start || ""} - ${event.end || ""}`
+                       : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}<br />
+                      📍 {event.address}<br />
+                      📖 {event.content}
+                  </div>
+                </Tooltip>
+              </Marker>
+            ))}
+          </MapContainer>
 
-        {/* 地圖下方滑動活動資訊 */}
-        <div className="event-slider-container">
+          {/* 地圖下方滑動活動資訊 */}
+            <div className="event-slider-container">
           {/* 左箭頭 */}
-          <button className="slider-arrow left" onClick={() => scrollSlider("left")}>
+            <button className="slider-arrow left" onClick={() => scrollSlider("left")}>
             ◀
-          </button>
+            </button>
 
           {/* 卡片滾動區域 */}
           {/* 卡片滑軌 */}
-<div className="event-slider" ref={sliderRef}>
-  {events.map((event) => (
-    <div
-      key={event.id}
-      ref={(el) => (cardRefs.current[event.id] = el)}
-      className="event-card"
-    >
-      <div className="event-name">{event.name}</div>
-      <div className="event-info">地址：{event.address}</div>
-      <div className="event-info">
-        日期：
-        {event.date
-          ? `${event.date} ${event.start || ""} - ${event.end || ""}`
-          : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}
-      </div>
-      <div className="event-info">內容：{event.content}</div>
-      {event.tag && (
-        <span style={{
-          display:"inline-block", marginTop:5, padding:"2px 6px",
-          backgroundColor: event.tag==="演唱會" ? "#dc3545" :
-                           event.tag==="市集" ? "#28a745" :
-                           event.tag==="展覽" ? "#007bff" : "#6c757d",
-          color:"#fff", borderRadius:6, fontSize:12
-        }}>
-          {event.tag}
-        </span>
-      )}
-    </div>
-  ))}
-</div>
+          <div className="event-slider" ref={sliderRef}>
+            {events.map((event) => (
+            <div
+              key={event.id}
+              ref={(el) => (cardRefs.current[event.id] = el)}
+              className="event-card"
+            >
+            <div className="event-name">{event.name}</div>
+            <div className="event-info">地址：{event.address}</div>
+            <div className="event-info">
+              日期：
+              {event.date
+              ? `${event.date} ${event.start || ""} - ${event.end || ""}`
+              : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}
+            </div>
+            <div className="event-info">內容：{event.content}</div>
+              {event.tag && (
+                <span style={{
+                  display:"inline-block", marginTop:5, padding:"2px 6px",
+                  backgroundColor: event.tag==="演唱會" ? "#dc3545" :
+                                   event.tag==="市集" ? "#28a745" :
+                                   event.tag==="展覽" ? "#007bff" : "#6c757d",
+                  color:"#fff", borderRadius:6, fontSize:12
+                  }}>
+                {event.tag}
+                </span>
+              )}
+            </div>
+            ))}
+          </div>
 
 
           {/* 右箭頭 */}
           <button className="slider-arrow right" onClick={() => scrollSlider("right")}>
             ▶
           </button>
-        </div>
+          </div>
+          </>
+        )}
       </div>
+    
     </div>
-  );
+    );
 }
 
 export default Home;

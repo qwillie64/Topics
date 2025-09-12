@@ -1,0 +1,201 @@
+/* =========================
+   OrganizerApply 頁（申請主辦方）
+   ========================= */
+
+/* [整體容器]：包住整個申請表內容（含標題、卡片、按鈕列） */
+.apply-container {
+    padding: 20px;
+    max-width: 1000px;  /* 表單整體寬度（保留雙欄時較寬） */
+    margin: 0 auto;
+  }
+  
+  /* [卡片]：表單各區塊外框（主要用於整份表單與流程說明） */
+  .apply-card {
+    background: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    margin-bottom: 14px;
+  }
+  
+  /* [雙欄網格]：主要表單區塊布局（保持原本的左右雙欄） */
+  .apply-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 兩欄 */
+    gap: 12px; /* 欄位間距縮小 */
+  }
+  
+  /* [欄位標籤]：各輸入欄位的標題（如「組織名稱」） */
+  .apply-label {
+    font-size: 14px;   /* 字體偏小，整體更緊湊 */
+    color: #555;
+    margin-bottom: 3px;
+  }
+  
+  /* [輸入框通用]：文字輸入、選擇框、Textarea 的基本樣式 */
+  .apply-input {
+    width: 100%;
+    max-width: 350px;  /* 輸入框縮短一些（避免過寬） */
+    padding: 6px 8px;  /* 內距縮小 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fff;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  /* [輸入框聚焦]：聚焦時的邊框與光暈 */
+  .apply-input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.12);
+  }
+  
+  /* [錯誤訊息]：欄位驗證失敗的提示文字 */
+  .apply-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  
+  /* [狀態橫幅]：顯示申請狀態（approved/pending/rejected/draft） */
+  .apply-status {
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .apply-status.approved {  /* 已通過 */
+    background: #2ecc71;
+  }
+  .apply-status.pending {   /* 審核中 */
+    background: #f39c12;
+  }
+  .apply-status.rejected {  /* 未通過 */
+    background: #e74c3c;
+  }
+  .apply-status.draft {     /* 草稿 */
+    background: #95a5a6;
+  }
+  
+  /* [審核中提示框]：送出後不可編輯時的提醒 */
+  .apply-note {
+    background: #f8f9fa;
+    border: 1px solid #eaeaea;
+    padding: 8px;
+    border-radius: 6px;
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  
+  /* [按鈕通用]：儲存草稿 / 提交申請 / 清除表單 */
+  .apply-btn {
+    padding: 6px 10px;   /* 按鈕縮小 */
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  /* [主要按鈕]：紫色實心（提交申請） */
+  .apply-btn.primary {
+    background: #6c63ff;
+    color: #fff;
+    border-color: #6c63ff;
+  }
+  .apply-btn.primary:hover {
+    filter: brightness(0.95);
+  }
+  
+  /* [危險按鈕]：紅色邊框（清除表單） */
+  .apply-btn.danger {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+  }
+  .apply-btn.danger.ghost {
+    background: transparent;
+  }
+  
+  /* =========================
+     社群連結（動態清單）
+     ========================= */
+  
+  /* 已新增清單：每一筆一列 */
+  .social-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+  }
+  
+  /* 單列：平台下拉 + URL + 刪除 */
+  .social-row { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+  }
+  
+  /* 新增一筆的輸入列 */
+  .social-add { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+    margin-top: 6px; 
+  }
+  
+  /* 小下拉寬度（平台） */
+  .apply-input--small { 
+    max-width: 180px; 
+  }
+  
+  /* URL 欄位：可拉寬 */
+  .social-url { 
+    flex: 1; 
+    min-width: 220px; 
+    max-width: 520px; 
+  }
+  
+  /* =========================
+     成功提交後的 Modal（彈窗）
+     ========================= */
+  
+  /* [遮罩]：全螢幕半透明背景 */
+  .apply-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+  
+  /* [彈窗本體]：顯示提交成功訊息與操作按鈕 */
+  .apply-modal {
+    width: min(460px, 92vw);
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+/* Header & Actions */
+.apply-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .apply-title { margin: 0; }
+  .apply-actions { display: flex; gap: 8px; }
+  
+  /* 讓 fieldset 不要有預設框線與間距 */
+  .apply-fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  /* 倒數提示色（可選） */
+  .apply-edit-countdown { color: #A86200; font-size: 13px; }
