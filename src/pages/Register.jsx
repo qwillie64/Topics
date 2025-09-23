@@ -13,7 +13,6 @@ export default function Register() {
           <input type="text" className="input-field" placeholder="用戶名稱" required />
           <input type="email" className="input-field" placeholder="電子郵件" required />
           <input type="tel" className="input-field" placeholder="手機號碼" required />
-          <input type="text" className="input-field" placeholder="帳號" required />
           <input type="password" className="input-field" placeholder="密碼" required />
 
           {/* ✅ 包一層讓按鈕跟切換連結都在一起，且靠右 */}

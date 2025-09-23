@@ -1,17 +1,41 @@
-// Sidebar.jsx - 左側導覽列（可自訂項目）
-import React from "react";
-import "../styles/sidebar.css";
+import { NavLink, Link } from "react-router-dom";
+import "../styles/Home.css"; // 直接沿用你現在的樣式（含 .nav-list / .nav-link）
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onToggle }) {
   return (
-    <div className="sidebar">
-      <h2>導覽列</h2>
-      <ul>
-        <li>🏠 首頁 {/* TODO: 改為導向首頁 */}</li>
-        <li>🗓 我的活動 {/* TODO: 導向使用者活動頁 */}</li>
-        <li>⭐ 收藏清單 {/* TODO: 收藏功能頁面 */}</li>
-        <li>⚙️ 設定 {/* TODO: 帳號設定或登出 */}</li>
+    <div className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
+      <div className="sidebar-header">
+        {isOpen && <span className="sidebar-title">導覽</span>}
+        <button className="toggle-btn" onClick={onToggle}>☰</button>
+      </div>
+
+      <ul className="nav-list">
+        <li>
+          <NavLink to="/" end className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            活動列表
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/favorites" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            我的收藏
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/create" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            新增活動
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/settings" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            設定
+          </NavLink>
+        </li>
       </ul>
+
+      <div className="auth-links">
+        <Link to="/login">登入</Link>
+        <Link to="/register">註冊</Link>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,11 @@
+// src/pages/Settings.jsx
+import { useNavigate, Link } from "react-router-dom"; // ← 新增：用 Router 導頁
 import "../styles/Settings.css";
 
-export default function Settings({ onNavigate }) {
+export default function Settings() {
+  const navigate = useNavigate(); // ← 用於按鈕導頁
+
+  // 讀使用者（和你原本相同）
   const savedUser = localStorage.getItem("currentUser");
   const user = savedUser
     ? JSON.parse(savedUser)
@@ -13,6 +18,7 @@ export default function Settings({ onNavigate }) {
         avatarUrl: "https://avatars.githubusercontent.com/u/9919?s=200&v=4",
       };
 
+  // 讀取主辦申請狀態（和你原本相同）
   const app = (() => {
     try { return JSON.parse(localStorage.getItem("organizerApplication")) || null; }
     catch { return null; }
@@ -40,7 +46,6 @@ export default function Settings({ onNavigate }) {
                 alt="avatar"
                 style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover" }}
               />
-              {/* <span style={{ color: "#888" }}>(不可編輯)</span> */}
             </div>
           </div>
 
@@ -97,10 +102,11 @@ export default function Settings({ onNavigate }) {
             </div>
           </div>
 
+          {/* 🚀 改用 Router 導頁，不再用 onNavigate */}
           {status === "pending" ? (
             <button
               className="settings-btn"
-              onClick={() => onNavigate && onNavigate("organizerApply")}
+              onClick={() => navigate("/apply")}   // ← 查看申請進度
               title="查看申請進度"
             >
               查看申請進度
@@ -108,12 +114,19 @@ export default function Settings({ onNavigate }) {
           ) : (
             <button
               className="settings-btn primary"
-              onClick={() => onNavigate && onNavigate("organizerApply")}
+              onClick={() => navigate("/apply")}   // ← 進入申請表單
             >
               {status === "approved" ? "查看主辦資訊" : "申請成為主辦方"}
             </button>
           )}
         </div>
+
+        {/* （可選）若已通過，顯示快速入口 */}
+        {status === "approved" && (
+          <div style={{ marginTop: 12, fontSize: 14 }}>
+            你也可以直接前往：<Link to="/create" style={{ color: "#6c63ff" }}>上傳活動</Link>
+          </div>
+        )}
       </section>
     </div>
   );

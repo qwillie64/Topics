@@ -1,30 +1,52 @@
-/* ===== 主畫面容器（整體排版用 flex）===== */
+/* ========================
+   1) 外層容器：.home-container
+   ======================== */
 .home-container {
   display: flex;
   height: 100vh;
+  width: 100%;
+  overflow: hidden;          /* 防止子元素超出 */
+  background: #f7f7f7;       /* 與 index.css 背景一致 */
 }
 
-/* ===== 側邊欄容器（左側導覽）===== */
+/* 讓搜尋欄與主內容的 dropdown 能溢出可見（必要時） */
+.search-bar {
+  overflow: visible;
+}
+.main-content {
+  height: 100vh;
+  overflow: auto;              /* ← 讓 Apply / Create 這些長頁能捲動 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 只有 Home 用這層包住，避免整頁跟著滾動 */
+.home-main {
+  height: 100%;
+  overflow: hidden;            /* ← 地圖區域內部自己管理捲動 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================
+   2) 側邊欄：.sidebar（含展開/收合）
+   ======================== */
 .sidebar {
-  width: 180px;
-  background-color: #ffffff;
+  width: 180px;              /* 預設寬度（收合/展開用 class 控制） */
+  background-color: #fff;
   padding: 10px;
-  position: relative; /* 為了讓底部登入連結定位 */
+  position: relative;        /* 讓底部登入連結可絕對定位 */
   transition: width 0.3s ease;
   overflow: hidden;
+  border-right: 1px solid #e8e8e8;
+  z-index: 1000;             /* 確保不被地圖覆蓋 */
 }
 
-/* 側邊欄展開時的寬度 */
-.sidebar.open {
-  width: 200px;
-}
+/* 展開與收合寬度 */
+.sidebar.open { width: 200px; }
+.sidebar.collapsed { width: fit-content; }
 
-/* 側邊欄收合時變窄 */
-.sidebar.collapsed {
-  width: fit-content;
-}
-
-/* 側邊欄標題區（含漢堡按鈕） */
+/* ====== 2-1) 側邊欄標題區（含漢堡） ====== */
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -32,86 +54,89 @@
   padding: 10px;
   font-weight: bold;
   font-size: 18px;
+  border-bottom: 1px solid #eee;
 }
-
-/* 側邊欄標題文字 */
-.sidebar-title {
-  margin: 0;
-}
-
-/* 漢堡選單按鈕 */
+.sidebar-title { margin: 0; }
 .toggle-btn {
-  background: none;
+  background: #f0f0f0;
   border: none;
   font-size: 20px;
   cursor: pointer;
   margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
-/* 側邊欄導覽項目列表 */
+/* ====== 2-2) 導覽清單（覆蓋版） ====== */
 .nav-list {
   list-style: none;
   padding-left: 0;
-  text-indent: 10px;
+  margin: 8px 0 0;
   line-height: 2;
 }
 
-/* 單一導覽項目 */
 .nav-list li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 6px;
   margin-bottom: 8px;
-  transition: background-color 0.2s;
 }
 
-/* 滑鼠移動到導覽項目時變色 */
-.nav-list li:hover {
-  background-color: #eee;
+/* NavLink 撐滿整塊，整個區塊可點 */
+.nav-link {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #000;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
 }
 
-/* 點擊後的導覽項目樣式 */
-.nav-list li.active {
-  background-color: #4f4f4f;
-  color: white;
-  font-weight: bold;
+/* hover 效果 */
+.nav-link:hover {
+  background-color: #f0f0f0;
 }
 
-/* 側邊欄登入/註冊連結區塊（固定在底部） */
+/* active 樣式 */
+.nav-link.active {
+  background-color: #d8d8d8;
+  color: #000;
+  font-weight: 600;
+}
+
+
+/* ====== 2-3) 側邊欄底部登入/註冊 ====== */
 .auth-links {
   position: absolute;
   bottom: 20px;
   left: 10px;
   font-size: 14px;
+  display: flex;
+  gap: 12px;
 }
-
-/* 登入/註冊連結樣式 */
 .auth-links a {
-  color: #000000;
+  color: #000;
   text-decoration: none;
-  margin: 0 5px;
 }
 
-/* 讓搜尋欄及主內容能顯示超出範圍的元素（例如 dropdown）*/
-.search-bar, .main-content {
-  overflow: visible !important;
-}
-
-/* ===== 主內容區域（右側）===== */
+/* ========================
+   3) 主內容區域：.main-content
+   ======================== */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative; /* 提供 search-bar 絕對定位的依據 */
+  position: relative;        /* 給上方 search-bar 定位用 */
+  min-width: 0;              /* 防止 flex 子項超出 */
 }
 
-/* ===== 搜尋欄容器（浮在地圖上方中央）===== */
+/* ========================
+   4) 搜尋欄：.search-bar（在地圖上方置中）
+   ======================== */
 .search-bar {
-  position: absolute;
+  position: absolute;        /* 漂浮在地圖上 */
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 1000;             /* 高於地圖 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -122,7 +147,11 @@
 .search-input {
   font-size: 16px;
   width: 300px;
+  height: 30px;
+  padding: 0 10px;
   border: 1px solid #808080;
+  border-radius: 6px;
+  background: #fff;
 }
 
 /* 篩選按鈕群組容器（水平排列） */
@@ -130,26 +159,27 @@
   display: flex;
   gap: 10px;
   position: relative;
-  z-index: 1;
+  z-index: 1; /* 讓 dropdown 在地圖上方 */
 }
 
 /* 單一篩選區塊（包含按鈕與下拉） */
 .filter-group {
-  position: relative;
+  position: relative; /* 讓內部 dropdown 以此為定位參考 */
 }
 
 /* 篩選 pill-style 按鈕 */
 .filter-pill {
   border: 1px solid #808080;
-  background-color: white;
+  background-color: #fff;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
 }
-
-/* 篩選按鈕 hover 效果 */
 .filter-pill:hover {
-  background-color: #ffffff;
+  background-color: #fff;
   border-color: #272727;
 }
 
@@ -158,46 +188,57 @@
   position: absolute;
   top: 40px;
   left: 0;
-  background: white;
+  background: #fff;
   border: 1px solid #7e7e7e;
   z-index: 1001;
-  width: 80px;
+  width: 100px;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 /* 單一下拉選項 */
 .dropdown-option {
-  padding: 5px 5px;
+  padding: 6px 8px;
   cursor: pointer;
   font-size: 14px;
 }
+.dropdown-option:hover { background-color: #f5f7fa; }
 
-/* 下拉選項 hover 效果 */
-.dropdown-option:hover {
-  background-color: #f1f1f1;
-}
-
-/* 日期選擇的日曆樣式 */
+/* 日期選擇器 dropdown */
 .calendar-dropdown {
-  position: absolute;
-  width: auto;
-  top: 100%;
-  left: 0;
-  z-index: 10;
+  top: 40px;
+  position: absolute; 
+  width: auto; 
+  left: 0; 
+  z-index: 10; 
   white-space: nowrap;
 }
 
+/* React DatePicker 的字體大小微調（其餘樣式走全域） */
 .react-datepicker {
   font-size: 14px;
 }
 
-/* ===== 地圖區塊樣式 ===== */
+/* ========================
+   5) 地圖樣式：.map（佔滿中間區）
+   ======================== */
 .map {
   flex: 1;
+  width: 100%;
+  z-index: 1;                 /* 低於搜尋與卡片 */
 }
 
-/* ===== 活動資訊滑動容器（⭐新增，為了定位箭頭） ===== */
+/* 保險：強制 Leaflet 在較低層，避免遮住浮動元件 */
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+/* ========================
+   6) 底部滑動卡片：.event-slider-container
+   ======================== */
 .event-slider-container {
-  position: absolute;
+  position: absolute;         /* 懸浮在地圖底部中央 */
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
@@ -208,7 +249,7 @@
   justify-content: center;
 }
 
-/* ===== 活動資訊滑動區塊 ===== */
+/* 6-1) 卡片滑軌（水平滾動） */
 .event-slider {
   display: flex;
   overflow-x: auto;
@@ -216,20 +257,18 @@
   padding: 10px 20px;
   border-radius: 12px;
   width: 100%;
-  scrollbar-width: none; /* Firefox 隱藏滾動條 */
+  scrollbar-width: none;      /* Firefox 隱藏滾動條 */
 }
-
 .event-slider::-webkit-scrollbar {
-  display: none; /* Chrome/Edge 隱藏滾動條 */
+  display: none;              /* Chrome/Edge 隱藏滾動條 */
 }
 
-/* ===== 左右箭頭樣式（⭐改成懸浮透明，垂直置中） ===== */
+/* 6-2) 左右箭頭（懸浮透明） */
 .slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 1000;
-
   background: transparent;
   border: none;
   font-size: 2rem;
@@ -237,28 +276,23 @@
   cursor: pointer;
   transition: color 0.2s ease;
 }
+.slider-arrow:hover { color: #000; }
+.slider-arrow.left { left: -50px; }
+.slider-arrow.right { right: -50px; }
 
-.slider-arrow:hover {
-  color: #000;
-}
-
-.slider-arrow.left {
-  left: -50px;
-}
-
-.slider-arrow.right {
-  right: -50px;
-}
-
-/* 單一活動卡片 */
+/* ========================
+   7) 單一活動卡片：.event-card
+   ======================== */
 .event-card {
   min-width: 220px;
-  background-color: white;
+  background-color: #fff;
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
   flex-shrink: 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e8e8e8;
+  cursor: pointer;            /* 可點擊（用於飛到地圖） */
 }
 
 /* 活動名稱 */
@@ -266,17 +300,34 @@
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 活動其他資訊（地址、內容等） */
+/* 活動資訊（地址、日期、內容等） */
 .event-info {
   margin-bottom: 4px;
   font-size: 14px;
+  color: #444;
 }
 
-/* 點擊時高亮卡片的動畫樣式 */
+/* ========================
+   8) 卡片高亮動畫（Marker 點擊時）
+   ======================== */
 .highlight-card {
   border: 2px solid #007bff;
   box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
   transition: border 0.3s, box-shadow 0.3s;
+}
+
+/* ========================
+   9) RWD
+   ======================== */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; }
+  .sidebar.open { width: 60px; }   /* 手機時以收合視覺為主 */
+  .event-slider-container { width: 95%; }
+  .slider-arrow.left { left: -36px; }
+  .slider-arrow.right { right: -36px; }
 }

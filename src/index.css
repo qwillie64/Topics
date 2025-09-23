@@ -1,206 +1,53 @@
-/* ==== Home 版面（新增） ======================================= */
+/* ========================
+   全域骨架／Reset／基礎字體
+   ======================== */
 
-/* 讓 100vh 高度在所有瀏覽器穩定 */
-html, body {
+/* 盒模型一致 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 讓 100vh 佈局穩定 */
+html, body, #root {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* 外層：左側欄 + 右側主內容 */
-.home-container {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  background: #f7f7f7;
+/* 全域字體與背景（可依品牌調整） */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Noto Sans TC", "Helvetica Neue", Arial, "Apple Color Emoji",
+               "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  color: #222;
+  background: #f7f7f7; /* 整體淡灰背景，頁面區塊再用白底 */
 }
 
-/* 側邊欄（保留你的 JSX，不動結構） */
-.sidebar {
-  width: 240px;                 /* 展開寬度 */
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
-  position: relative;           /* 用相對定位就好 */
-  z-index: 1000;                /* 確保在地圖上層 */
-  display: flex;
-  flex-direction: column;
-}
-.sidebar.collapsed { width: 60px; }
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-.sidebar-title { font-weight: 600; }
-.toggle-btn {
-  cursor: pointer;
-  border: none;
-  background: #f0f0f0;
-  padding: 6px 10px;
-  border-radius: 6px;
+/* 連結預設：不帶底線、沿用文字顏色（視情況覆蓋） */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.nav-list { list-style: none; margin: 8px 0 0; padding: 0; }
-.nav-list li { padding: 10px 14px; cursor: pointer; }
-.nav-list li:hover { background: #f6f8fa; }
-.nav-list li.active { background: #e9f2ff; font-weight: 600; }
-
-.auth-links {
-  margin-top: auto;
-  padding: 12px 14px;
-  display: flex;
-  gap: 12px;
-  font-size: 14px;
+/* 圖片不超出容器 */
+img {
+  max-width: 100%;
+  display: block;
 }
 
-/* 右側主內容：上(搜尋) / 中(地圖) / 下(卡片) */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  min-width: 0;                 /* 防止 flex 子項超出 */
+/* 表單元素基礎（可依需求微調） */
+input, button, select, textarea {
+  font: inherit;
 }
 
-/* 搜尋列固定在主內容頂部 */
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  background: #fff;
-  border-bottom: 1px solid #eaeaea;
-  z-index: 600;                 /* 高於地圖 */
-}
-.search-input {
-  flex: 1; min-width: 160px; height: 36px;
-  padding: 0 10px; border: 1px solid #ddd; border-radius: 6px;
-}
-.filter-buttons { display: flex; align-items: center; gap: 10px; position: relative; }
-.filter-group { position: relative; }
-.filter-pill {
-  height: 32px; padding: 0 12px; border: 1px solid #ddd;
-  border-radius: 999px; background: #fff; cursor: pointer;
-}
-.filter-dropdown, .calendar-dropdown {
-  position: absolute; top: 40px; left: 0; background: #fff;
-  border: 1px solid #e6e6e6; border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding: 8px; z-index: 700;
-}
-.dropdown-option { padding: 8px 12px; border-radius: 6px; cursor: pointer; }
-.dropdown-option:hover { background: #f5f7fa; }
-
-/* 地圖：吃掉中間剩餘空間 */
-.map {
-  flex: 1;
-  width: 100%;
-  z-index: 1;                   /* 低於 sidebar / 搜尋列 / 卡片 */
-}
-/* 保險：強制 Leaflet 在較低層，避免覆蓋 */
-.leaflet-container { z-index: 1 !important; }
-
-/* 底部滑動卡片區 */
-.event-slider-container {
-  position: relative;
-  height: 200px;
-  background: #fff;
-  border-top: 1px solid #eaeaea;
-  z-index: 500;                 /* 疊在地圖上 */
-  display: flex;
-  align-items: center;
-  overflow: hidden;
+/* React DatePicker 的字體繼承（保證與全站一致） */
+.react-datepicker {
+  font: inherit;
 }
 
-/* 左右箭頭 */
-.slider-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  z-index: 600; border: none; background: rgba(0,0,0,0.55); color: #fff;
-  width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
-  display: grid; place-items: center; transition: background .15s ease;
-}
-.slider-arrow:hover { background: rgba(0,0,0,0.7); }
-.slider-arrow.left { left: 10px; }
-.slider-arrow.right { right: 10px; }
-
-/* 卡片滾動容器 */
-.event-slider {
-  overflow-x: auto; overflow-y: hidden; white-space: nowrap;
-  display: flex; gap: 12px; padding: 14px 48px; width: 100%;
-  scroll-behavior: smooth;
-}
-
-/* 單張卡片 */
-.event-card {
-  display: inline-flex; flex-direction: column;
-  min-width: 320px; max-width: 360px; height: 150px;
-  background: #fff; border: 1px solid #e8e8e8;
-  border-radius: 12px; padding: 12px 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.event-name { font-weight: 700; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.event-info { font-size: 14px; color: #444; margin-bottom: 4px; }
-
-/* Marker 點擊時捲到卡片的高亮 */
-.highlight-card {
-  outline: 3px solid #2b6cb0;
-  box-shadow: 0 0 0 3px rgba(43,108,176,0.25);
-}
-
-/* RWD */
-@media (max-width: 768px) {
-  .sidebar { width: 60px; }
-  .event-slider-container { height: 180px; }
-  .event-card { min-width: 280px; height: 140px; }
-}
-
-/* === 讓 100vh 佈局穩定 === */
-html, body, #root { height: 100%; }
-
-/* === 外層 === */
-.home-container {
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* === 固定在左側的 Sidebar（保留你的 class: open / collapsed） === */
-.sidebar {
-  position: fixed;   /* 關鍵：固定左側，不會被地圖覆蓋 */
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 240px;      /* 展開寬度 */
-  background: #fff;
-  border-right: 1px solid #e8e8e8;
-  z-index: 1000;     /* 層級高於地圖 */
-  display: flex;
-  flex-direction: column;
-}
-.sidebar.collapsed { width: 60px; }
-
-/* === 主內容在 Sidebar 的右邊 === */
-.main-content {
-  height: 100vh;
-  overflow: hidden;
-  /* 預設以展開寬度右移 */
-  margin-left: 240px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-/* 當 Sidebar 收合時，主內容自動右移較小距離 */
-.sidebar.collapsed ~ .main-content { margin-left: 60px; }
-
-/* === 搜尋列覆蓋在地圖上（避免被地圖遮） === */
-.search-bar { z-index: 600; position: relative; }
-
-/* === 地圖區放在較低層 === */
-.map { flex: 1; width: 100%; z-index: 1; }
-.leaflet-container { z-index: 1 !important; }
-
-/* === 底部滑動卡片（如有）疊在地圖上 === */
-.event-slider-container { z-index: 500; position: relative; }
-.slider-arrow { z-index: 600; }
+/* 可選：常用小工具類（少量即可；其餘請放各頁面 CSS）
+.hidden { display: none !important; }
+.text-center { text-align: center !important; }
+*/

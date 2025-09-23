@@ -1,0 +1,152 @@
+/* [整體容器]：頁面寬度與內距 */
+.create-container {
+  padding: 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* [卡片]：每個區塊外框 */
+.create-card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  margin-bottom: 14px;
+}
+
+/* 卡片標題（補上共同風格） */
+.create-card-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* [雙欄網格]：中版兩欄、窄版單欄 */
+.create-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .create-grid2 { grid-template-columns: 1fr; }
+}
+
+/* [欄位標籤] */
+.create-label {
+  font-size: 14px;  
+  color: #555;
+  margin-bottom: 3px;
+  font-weight: 600;
+  width: 100%;
+}
+
+/* [輸入框通用]：input / select / textarea / 自訂按鈕 */
+.create-input {
+  width: 100%;
+  max-width: 90%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+/* 聚焦態 */
+.create-input:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.12);
+}
+
+/* 文字區域（高度可調） */
+.create-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* 自訂「像輸入框的按鈕」（給 DatePicker customInput） */
+.create-input-like {
+  text-align: left;
+  cursor: pointer;
+  height: 36px;
+}
+
+/* 輔助寬度（票價區塊） */
+.create-input--w120 { max-width: 120px; }
+.create-input--w200 { max-width: 200px; }
+
+/* [Row 間距] */
+.create-row { margin-bottom: 12px; }
+
+/* [行內排列] */
+.create-inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+/* 不可選中文字（如單選、多選區避免誤框選） */
+.no-select { user-select: none; }
+
+/* [錯誤訊息] */
+.create-error {
+  color: #c0392b;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* [按鈕通用] */
+.create-btn {
+  padding: 6px 10px;  
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 主要按鈕 */
+.create-btn.primary {
+  background: #6c63ff;
+  color: #fff;
+  border-color: #6c63ff;
+}
+.create-btn.primary:hover {
+  filter: brightness(0.95);
+}
+
+/* 禁用態（備用） */
+.create-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* [底部操作列] */
+.create-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* [封面預覽區] */
+.create-cover-section { margin-top: 8px; }
+.create-cover-label { margin-bottom: 6px; color: #666; }
+.create-cover-preview {
+  max-width: 320px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* ====== 頁首 ====== */
+.create-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.create-title { margin: 0; }
+.create-actions { display: flex; gap: 8px; align-items: center; color: #666; font-size: 13px; }
+.create-saved { color: #2ecc71; }
+
+/* ====== react-datepicker 外層 ====== */
+.rc-datepicker-wrapper { display: inline-block; }
+.rc-datepicker-wrapper .react-datepicker { font-size: 14px; }

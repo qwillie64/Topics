@@ -1,5 +1,6 @@
-// src/pages/OrganizerApply.jsx
+// src/pages/Apply.jsx
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ← 新增：用 Router 導回設定頁
 import "../styles/Apply.css";
 
 // 可選社群平台
@@ -60,6 +61,7 @@ const isChanged = (a, b) =>
   JSON.stringify(pickComparable(a)) !== JSON.stringify(pickComparable(b));
 
 export default function OrganizerApply({ onBack }) {
+  const navigate = useNavigate(); // ← 新增
   const [app, setApp] = useState(defaultApp);
   const [errors, setErrors] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
@@ -229,13 +231,14 @@ export default function OrganizerApply({ onBack }) {
     setIsDirty(false);
   };
 
-  // 返回設定：dirty 時攔截
+  // 返回設定：dirty 時攔截（若沒傳 onBack，預設回 /settings）
   const safeGoBack = () => {
     if (isEditing && isDirty) {
       const ok = confirm("你有尚未儲存的變更，確定要離開嗎？");
       if (!ok) return;
     }
-    onBack && onBack();
+    if (onBack) onBack();
+    else navigate("/settings"); // ← 預設導回設定頁
   };
 
   // ====== 社群連結：操作方法 ======
