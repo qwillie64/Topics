@@ -267,11 +267,11 @@ export default function EventCreate({ onBack }) {
         <h3 className="create-card-title">地點與時間</h3>
 
         {/* 城市 + 地址 */}
-        <div className="create-row create-grid2">
+        <div className="create-row create-grid2 create-city-address">
           <div>
             <div className="create-label">城市 *</div>
             <select
-              className="create-input"
+              className="create-input create-input--city"
               value={form.city}
               onChange={(e) => persist({ ...form, city: e.target.value })}
             >
@@ -348,52 +348,86 @@ export default function EventCreate({ onBack }) {
         </div>
         <FieldError msg={errors.dateRange} />
 
-        {/* 時間（開始 / 結束） */}
+        {/* 時間（直接選擇） */}
         <div className="create-row create-grid2">
           {/* 開始時間 */}
-          <div className="picker-field" ref={timeStartRef}>
+          <div>
             <div className="create-label">開始時間 *</div>
-            <button
-              type="button"
-              className="create-input create-input-like"
-              onClick={() => setOpenTime(s => ({ start: !s.start, end: false }))}
-              aria-haspopup="listbox"
-              aria-expanded={openTime.start}
-            >
-              {form.startTime ? toHM(form.startTime) : "選擇開始時間"}
-            </button>
-
-            {openTime.start && (
-              <TimeDropdown
-                onClose={() => setOpenTime(s => ({ ...s, start: false }))}
-                value={form.startTime}
-                onChange={(d) => persist({ ...form, startTime: d })}
-                anchorRef={timeStartRef}
-              />
-            )}
+            <div className="create-time-group">
+              <select
+                className="create-input create-input--time"
+                value={form.startTime ? form.startTime.getHours() : ""}
+                onChange={(e) => {
+                  const h = Number(e.target.value);
+                  const m = form.startTime ? form.startTime.getMinutes() : 0;
+                  const d = new Date();
+                  d.setHours(h, m, 0, 0);
+                  persist({ ...form, startTime: d });
+                }}
+              >
+                <option value="">時</option>
+                {Array.from({ length: 24 }, (_, i) => (
+                  <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
+                ))}
+              </select>
+              <span>:</span>
+              <select
+                className="create-input create-input--time"
+                value={form.startTime ? form.startTime.getMinutes() : ""}
+                onChange={(e) => {
+                  const m = Number(e.target.value);
+                  const h = form.startTime ? form.startTime.getHours() : 0;
+                  const d = new Date();
+                  d.setHours(h, m, 0, 0);
+                  persist({ ...form, startTime: d });
+                }}
+              >
+                <option value="">分</option>
+                {Array.from({ length: 60 }, (_, i) => (
+                  <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* 結束時間 */}
-          <div className="picker-field" ref={timeEndRef}>
+          <div>
             <div className="create-label">結束時間 *</div>
-            <button
-              type="button"
-              className="create-input create-input-like"
-              onClick={() => setOpenTime(s => ({ start: false, end: !s.end }))}
-              aria-haspopup="listbox"
-              aria-expanded={openTime.end}
-            >
-              {form.endTime ? toHM(form.endTime) : "選擇結束時間"}
-            </button>
-
-            {openTime.end && (
-              <TimeDropdown
-                onClose={() => setOpenTime(s => ({ ...s, end: false }))}
-                value={form.endTime}
-                onChange={(d) => persist({ ...form, endTime: d })}
-                anchorRef={timeEndRef}
-              />
-            )}
+            <div className="create-time-group">
+              <select
+                className="create-input create-input--time"
+                value={form.endTime ? form.endTime.getHours() : ""}
+                onChange={(e) => {
+                  const h = Number(e.target.value);
+                  const m = form.endTime ? form.endTime.getMinutes() : 0;
+                  const d = new Date();
+                  d.setHours(h, m, 0, 0);
+                  persist({ ...form, endTime: d });
+                }}
+              >
+                <option value="">時</option>
+                {Array.from({ length: 24 }, (_, i) => (
+                  <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
+                ))}
+              </select>
+              <span>:</span>
+              <select
+                className="create-input create-input--time"
+                value={form.endTime ? form.endTime.getMinutes() : ""}
+                onChange={(e) => {
+                  const m = Number(e.target.value);
+                  const h = form.endTime ? form.endTime.getHours() : 0;
+                  const d = new Date();
+                  d.setHours(h, m, 0, 0);
+                  persist({ ...form, endTime: d });
+                }}
+              >
+                <option value="">分</option>
+                {Array.from({ length: 60 }, (_, i) => (
+                  <option key={i} value={i}>{String(i).padStart(2, "0")}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         <FieldError msg={errors.startTime || errors.endTime} />
@@ -494,19 +528,6 @@ export default function EventCreate({ onBack }) {
             />
           </div>
         ) : null}
-      </section>
-
-      {/* ===== 其他 ===== */}
-      <section className="create-card">
-        <h3 className="create-card-title">其他</h3>
-        <label className="create-inline no-select">
-          <input
-            type="checkbox"
-            checked={form.isPublic}
-            onChange={(e) => persist({ ...form, isPublic: e.target.checked })}
-          />
-          活動公開於前台列表（取消勾選 = 隱藏）
-        </label>
       </section>
 
       {/* ===== 底部操作列 ===== */}

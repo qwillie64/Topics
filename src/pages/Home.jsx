@@ -69,8 +69,10 @@ export default function Home() {
     getEvents()
       .then((data) => {
         const raw = Array.isArray(data) ? data : (data?.items ?? data?.data ?? []);
-        const normalized = (raw ?? []).map(normalizeEvent)
-          .filter(e => Number.isFinite(e._lat) && Number.isFinite(e._lng));
+        const normalized = (raw ?? []).map(e => ({
+          ...normalizeEvent(e),
+          expanded: false
+        })).filter(e => Number.isFinite(e._lat) && Number.isFinite(e._lng));
         setEvents(normalized);
       })
       .catch((e) => { console.error("getEvents error:", e); setEvents([]); });
@@ -228,14 +230,7 @@ export default function Home() {
                 eventHandlers={{ click: () => focusCard(event.id) }}
               >
                 <Tooltip direction="top" offset={[0, -20]} opacity={1}>
-                  <div>
-                    <strong>{event.name}</strong><br />
-                    🗓 {event.date
-                          ? `${event.date} ${event.start || ""} - ${event.end || ""}`
-                          : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}<br />
-                    📍 {event.address}<br />
-                    📖 {event.content}
-                </div>
+                  <strong>{event.name}</strong>
                 </Tooltip>
               </Marker>
             ))}
@@ -268,14 +263,40 @@ export default function Home() {
                   title="點我讓地圖飛到這個活動"
                 >
                   <div className="event-name">{event.name}</div>
-                  <div className="event-info">地址：{event.address}</div>
+                  <div className="event-info">地址：{event.place}</div>
                   <div className="event-info">
                     日期：
                     {event.date
                       ? `${event.date} ${event.start || ""} - ${event.end || ""}`
                       : (event.start && event.end) ? `${event.start} - ${event.end}` : "未提供"}
                   </div>
-                  <div className="event-info">內容：{event.content}</div>
+                  <div className="event-info event-content-wrapper">
+                    {event.expanded ? (
+                      <div className="event-content-text">
+                        內容：{event.content}
+                        <span 
+                          className="event-content-collapse" 
+                          onClick={() => setEvents(prev => 
+                            prev.map(e => e.id === event.id ? {...e, expanded: false} : e)
+                          )}
+                        >
+                          收合
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="event-content-text">
+                        內容：{event.content ? `${event.content.slice(0, 50)}...` : ""}
+                        <span 
+                          className="event-content-expand"
+                          onClick={() => setEvents(prev => 
+                            prev.map(e => e.id === event.id ? {...e, expanded: true} : e)
+                          )}
+                        >
+                          展開
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   {event.tag && (
                     <span style={{
                       display:"inline-block", marginTop:5, padding:"2px 6px",

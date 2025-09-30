@@ -1,5 +1,6 @@
 import "../styles/global.css";
 import "../styles/register.css";
+import { register } from "../api/account"
 import { Link } from "react-router-dom";
 
 export default function Register() {

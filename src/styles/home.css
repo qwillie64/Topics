@@ -98,8 +98,64 @@
 /* active 樣式 */
 .nav-link.active {
   background-color: #d8d8d8;
+}
+
+/* ========================
+   Event Content Details
+   ======================== */
+.event-content-wrapper {
+  position: relative;
+}
+
+.event-content-text {
+  display: inline;
+}
+
+.event-content-summary {
+  display: inline;
+  cursor: default;
+}
+
+.event-content-summary:hover {
+  text-decoration: none;
+}
+
+.event-content-preview {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-line-clamp: 2;
+  -moz-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  margin-bottom: 4px;
+}
+
+.event-content-summary::-webkit-details-marker {
+  display: none;
+}
+
+.event-content-expand,
+.event-content-collapse {
+  color: #9c9c9c;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  margin-left: 4px;
+  display: inline-block;
+}
+
+.event-content-full {
+  display: inline;
+}
+
+.event-content-full {
+  margin-top: 8px;
   color: #000;
-  font-weight: 600;
 }
 
 
@@ -234,6 +290,11 @@
   z-index: 1 !important;
 }
 
+/* Tooltip 文字大小 */
+.leaflet-tooltip {
+  font-size: 14px !important;
+}
+
 /* ========================
    6) 底部滑動卡片：.event-slider-container
    ======================== */
@@ -284,7 +345,7 @@
    7) 單一活動卡片：.event-card
    ======================== */
 .event-card {
-  min-width: 220px;
+  width: 450px;
   background-color: #fff;
   padding: 12px;
   border-radius: 8px;

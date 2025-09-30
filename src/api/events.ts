@@ -35,7 +35,7 @@ export async function searchEvents(params: any) {
     const { data } = await api.get<EventItem[] | Paginated<EventItem>>(`/events${qs}`);
     return data;
   } catch (err) {
-    throw toApiError(err);
+    throw toApiError(err); 
   }
 }
 
