@@ -8,6 +8,7 @@ import { getEvents } from "../api/events";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useFavorites } from "../context/FavoritesContext";
 
 // ========================
 // 自訂 Marker 圖示
@@ -38,9 +39,6 @@ function normalizeEvent(e) {
 }
 
 export default function Home() {
-  // ========================
-  // State
-  // ========================
   const [events, setEvents] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openFilter, setOpenFilter] = useState(null);
@@ -49,22 +47,18 @@ export default function Home() {
   const [showClickPopup, setShowClickPopup] = useState(false);
   const [startDate, endDate] = dateRange;
 
-  // ========================
-  // Refs
-  // ========================
+  const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();  // ✅ 完整 context
+
   const filterRef = useRef(null);
   const cardRefs = useRef({});
   const sliderRef = useRef(null);
   const mapRef = useRef(null);
 
-  // 目前路徑（用來讓 li 套用 .active）
   const { pathname } = useLocation();
   const isActive = (pathPrefix, exact = false) =>
     exact ? pathname === pathPrefix : pathname.startsWith(pathPrefix);
 
-  // ========================
   // 載入活動資料
-  // ========================
   useEffect(() => {
     getEvents()
       .then((data) => {
@@ -78,18 +72,12 @@ export default function Home() {
       .catch((e) => { console.error("getEvents error:", e); setEvents([]); });
   }, []);
 
-  // ========================
-  // 點地圖 → 提示 3 秒
-  // ========================
   const handleMapClick = (latlng) => {
     setClickedLatLng(latlng);
     setShowClickPopup(true);
     setTimeout(() => setShowClickPopup(false), 3000);
   };
 
-  // ========================
-  // 左右滑動卡片
-  // ========================
   const scrollSlider = (direction) => {
     if (sliderRef.current) {
       const scrollAmount = 300;
@@ -100,9 +88,6 @@ export default function Home() {
     }
   };
 
-  // ========================
-  // 點 Marker → 捲到對應卡片並高亮
-  // ========================
   const focusCard = (id) => {
     const el = cardRefs.current[id];
     if (!el || !sliderRef.current) return;
@@ -115,9 +100,6 @@ export default function Home() {
     setTimeout(() => el.classList.remove("highlight-card"), 1200);
   };
 
-  // ========================
-  // 點卡片 → 地圖飛到該活動位置
-  // ========================
   const flyToEvent = (event) => {
     if (!mapRef.current) return;
     const target = [event._lat, event._lng];
@@ -125,9 +107,6 @@ export default function Home() {
     mapRef.current.flyTo(target, zoom, { duration: 0.8 });
   };
 
-  // ========================
-  // 點擊外面 → 收合篩選下拉
-  // ========================
   useEffect(() => {
     const onDocClick = (e) => {
       if (!filterRef.current) return;
@@ -137,9 +116,21 @@ export default function Home() {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
+  // ========================
+  // 收藏按鈕處理
+  // ========================
+  const handleFavoriteClick = (event) => {
+    if (isFavorite(event.id)) {
+      if (window.confirm(`確定要取消收藏「${event.name}」嗎？`)) {
+        removeFromFavorites(event.id);
+      }
+    } else {
+      addToFavorites(event);
+    }
+  };
+
   return (
     <div className="home-container">
-      {/* 主內容區域（地圖 + 搜尋 + 卡片） */}
       <div className="main-content">
         <div className="home-main">
           {/* 搜尋欄 */}
@@ -249,10 +240,8 @@ export default function Home() {
 
           {/* 地圖下方滑動活動資訊 */}
           <div className="event-slider-container">
-            {/* 左箭頭 */}
             <button className="slider-arrow left" onClick={() => scrollSlider("left")}>◀</button>
 
-            {/* 卡片滑軌 */}
             <div className="event-slider" ref={sliderRef}>
               {events.map((event) => (
                 <div
@@ -262,6 +251,14 @@ export default function Home() {
                   onClick={() => flyToEvent(event)}
                   title="點我讓地圖飛到這個活動"
                 >
+                  {/* 收藏按鈕 */}
+                  <button
+                    className={`favorite-btn ${isFavorite(event.id) ? "favorited" : ""}`}
+                    onClick={(e) => { e.stopPropagation(); handleFavoriteClick(event); }}
+                  >
+                    {isFavorite(event.id) ? "★" : "☆"}
+                  </button>
+
                   <div className="event-name">{event.name}</div>
                   <div className="event-info">地址：{event.place}</div>
                   <div className="event-info">
@@ -312,7 +309,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* 右箭頭 */}
             <button className="slider-arrow right" onClick={() => scrollSlider("right")}>▶</button>
           </div>
         </div>
