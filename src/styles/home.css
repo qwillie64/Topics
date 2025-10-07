@@ -132,7 +132,7 @@
 }
 
 /* ========================
-   Event Content Details (原本的保留)
+   Event Content Details
    ======================== */
 .event-content-wrapper {
   position: relative;
@@ -380,6 +380,7 @@
   font-size: 14px;
   color: #444;
 }
+
 
 /* 收藏按鈕（卡片右上角的小星星） */
 .favorite-btn {
