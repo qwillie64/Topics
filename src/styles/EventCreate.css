@@ -1,22 +1,40 @@
 /* =========================
    EventCreate 頁（上傳活動）
-   基於 Apply.css 的結構風格
    ========================= */
 
-/* [整體容器]：頁面寬度與內距 */
+/* [整/* [輔助寬度（票價區塊、城市、時間）] */
+.create-input--w120 { width: 120px; }
+.create-input--w200 { width: 200px; }
+.create-input--city { width: 80px; }
+.create-input--time { width: 70px; }
+
+/* [時間選擇器區塊] */
+.create-time-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.create-time-group span {
+  color: #666;
+  font-size: 14px;
+}
+/* 頁面寬度與內距 */
 .create-container {
   padding: 20px;
-  max-width: 1100px;   /* 視覺拉寬 */
+  width: 80%;
+  max-width: 800px;   /* 限制最大寬度 */
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* [卡片]：每個區塊外框 */
 .create-card {
   background: #fff;
-  padding: 14px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-  margin-bottom: 14px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
 /* 卡片標題 */
@@ -29,11 +47,20 @@
 /* [雙欄網格]：中版兩欄、窄版單欄 */
 .create-grid2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* [城市地址排版]：城市固定寬度，地址填滿剩餘空間 */
+.create-grid2.create-city-address {
+  grid-template-columns: auto 1fr;
   gap: 12px;
 }
 @media (max-width: 900px) {
-  .create-grid2 { grid-template-columns: 1fr; }
+  .create-grid2 { 
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 /* [欄位標籤] */
@@ -48,20 +75,24 @@
 /* [輸入框通用] */
 .create-input {
   width: 100%;
-  max-width: 350px;
-  padding: 6px 8px;
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background: #fff;
   outline: none;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 /* 類 input 的按鈕（Date/Time 觸發器） */
 .create-input-like {
   text-align: left;
   cursor: pointer;
-  height: 36px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 聚焦態 */
@@ -77,22 +108,24 @@
   resize: vertical;
 }
 
-/* 輔助寬度（票價區塊） */
-.create-input--w120 { max-width: 120px; }
-.create-input--w200 { max-width: 200px; }
+/* 輔助寬度（票價區塊、城市） */
+.create-input--w120 { width: 120px; }
+.create-input--w200 { width: 200px; }
+.create-input--city { width: 80px; }
 
 /* [Row 間距] */
-.create-row { margin-bottom: 12px; }
+.create-row { 
+  margin-bottom: 16px;
+  width: 100%;
+}
 
 /* [行內排列] */
 .create-inline {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+  width: 100%;
 }
-
-/* 不可選中文字（例如單選、多選） */
-.no-select { user-select: none; }
 
 /* [錯誤訊息] */
 .create-error {
@@ -171,6 +204,11 @@
 .create-popover .react-datepicker {
   border: none;           /* 用外層卡片邊框 */
   font-size: 14px;
+}
+
+/* [時間選擇器輔助寬度] */
+.create-input-like--time {
+  width: 100px;
 }
 
 /* ====== Time dropdown popover ====== */

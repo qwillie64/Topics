@@ -47,6 +47,7 @@ export async function logout() {
 
 /** POST /account/register — create new account */
 export async function register(payload: RegisterRequest) {
+  console.log("Registering account with payload:", payload);
   try {
     const { data } = await api.post<{ success: boolean; profile?: AccountProfile }>("/account/register", payload);
     return data;

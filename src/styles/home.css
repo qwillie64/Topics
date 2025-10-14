@@ -32,7 +32,7 @@
    2) 側邊欄：.sidebar（含展開/收合）
    ======================== */
 .sidebar {
-  width: 180px;              /* 預設寬度（收合/展開用 class 控制） */
+  width: 180px;
   background-color: #fff;
   padding: 10px;
   position: relative;        /* 讓底部登入連結可絕對定位 */
@@ -44,7 +44,7 @@
 
 /* 展開與收合寬度 */
 .sidebar.open { width: 200px; }
-.sidebar.collapsed { width: fit-content; }
+.sidebar.collapsed { width: 60px; }
 
 /* ====== 2-1) 側邊欄標題區（含漢堡） ====== */
 .sidebar-header {
@@ -67,7 +67,24 @@
   border-radius: 6px;
 }
 
-/* ====== 2-2) 導覽清單（覆蓋版） ====== */
+/* ====== 2-2) 側邊欄內容展開/收合 ====== */
+.sidebar-content {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar-content.show {
+  opacity: 1;
+  max-height: 1000px; /* 給動畫用 */
+}
+
+.sidebar-content.hide {
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none; /* 收合時不能點擊 */
+}
+
+/* ====== 導覽清單 ====== */
 .nav-list {
   list-style: none;
   padding-left: 0;
@@ -98,10 +115,7 @@
 /* active 樣式 */
 .nav-link.active {
   background-color: #d8d8d8;
-  color: #000;
-  font-weight: 600;
 }
-
 
 /* ====== 2-3) 側邊欄底部登入/註冊 ====== */
 .auth-links {
@@ -116,6 +130,55 @@
   color: #000;
   text-decoration: none;
 }
+
+/* ========================
+   Event Content Details
+   ======================== */
+.event-content-wrapper {
+  position: relative;
+}
+
+.event-content-text {
+  display: inline;
+}
+
+.event-content-summary {
+  display: inline;
+  cursor: default;
+}
+
+.event-content-summary:hover {
+  text-decoration: none;
+}
+
+.event-content-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  margin-bottom: 4px;
+}
+
+.event-content-summary::-webkit-details-marker {
+  display: none;
+}
+
+.event-content-expand,
+.event-content-collapse {
+  color: #9c9c9c;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  margin-left: 4px;
+  display: inline-block;
+}
+
+.event-content-full {
+  margin-top: 8px;
+  color: #000;
+}
+
 
 /* ========================
    3) 主內容區域：.main-content
@@ -234,6 +297,11 @@
   z-index: 1 !important;
 }
 
+/* Tooltip 文字大小 */
+.leaflet-tooltip {
+  font-size: 14px !important;
+}
+
 /* ========================
    6) 底部滑動卡片：.event-slider-container
    ======================== */
@@ -284,7 +352,7 @@
    7) 單一活動卡片：.event-card
    ======================== */
 .event-card {
-  min-width: 220px;
+  width: 450px;
   background-color: #fff;
   padding: 12px;
   border-radius: 8px;
@@ -293,6 +361,7 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #e8e8e8;
   cursor: pointer;            /* 可點擊（用於飛到地圖） */
+  position: relative;
 }
 
 /* 活動名稱 */
@@ -311,6 +380,21 @@
   font-size: 14px;
   color: #444;
 }
+
+
+/* 收藏按鈕（卡片右上角的小星星） */
+.favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 30px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+.favorite-btn.favorited { color: gold; }
 
 /* ========================
    8) 卡片高亮動畫（Marker 點擊時）
