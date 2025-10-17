@@ -2,6 +2,13 @@
    EventCreate 頁（上傳活動）
    ========================= */
 
+/* 只在建立活動頁把滾動打回來 */
+.main-content {
+  overflow: auto;   /* 或 overflow-y: auto; */
+  padding: 16px 20px;   /* 若你希望這頁有內距，可以順便補回 */
+  position: static;     /* 如果想完全回到一般流式排版 */
+}
+
 /* [整/* [輔助寬度（票價區塊、城市、時間）] */
 .create-input--w120 { width: 120px; }
 .create-input--w200 { width: 200px; }

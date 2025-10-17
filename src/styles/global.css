@@ -137,3 +137,34 @@ label {
   text-decoration: none;
   font-size: 14px;
 }
+
+
+/* 頂部訊息視窗：共用樣式（Register / Login 都會用到） */
+.top-toast{
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;
+  background: #547fc0;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 680px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.top-toast .btn{
+  background: #fff;
+  color: #547fc0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}

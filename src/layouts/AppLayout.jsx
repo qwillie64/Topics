@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import "../styles/Home.css"; // 使用同一套版面配置（sidebar + main-content）
+import "../styles/home.css"; // 使用同一套版面配置（sidebar + main-content）
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

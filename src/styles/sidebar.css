@@ -1,0 +1,130 @@
+/* ==========================================================================
+   Sidebar（漢堡在展開/收合都顯示三條線；固定底部登入/註冊；收合不留白）
+   ========================================================================== */
+
+.sidebar {
+  width: 260px;
+  height: 100vh;               /* 讓 grow 把底部推到底 */
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1200;
+}
+
+/* Header 區：標題 + 漢堡 */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-title {
+  margin: 8px 8px 8px 8px;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+/* === 漢堡按鈕（展開/收合都維持三條線，不變 X） === */
+.hamburger {
+  position: relative;
+  width: 36px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+.hamburger:hover { background: #f5f5f5; }
+
+/* 三條線的基本樣式 */
+.hamburger span {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: #333;
+  border-radius: 2px;
+  transition: transform .22s ease, opacity .18s ease, top .22s ease;
+}
+
+/* 預設三條線位置（兩種狀態一致，維持漢堡外觀） */
+.hamburger span:nth-child(1) { top: 9px;  }
+.hamburger span:nth-child(2) { top: 15px; }
+.hamburger span:nth-child(3) { top: 21px; }
+
+/* 可選：在兩種狀態做微小動態（不變成 X） */
+.hamburger.is-open span:nth-child(1) { transform: translateY(0);   opacity: 1; }
+.hamburger.is-open span:nth-child(2) { transform: translateY(0);   opacity: 1; }
+.hamburger.is-open span:nth-child(3) { transform: translateY(0);   opacity: 1; }
+
+.hamburger:not(.is-open) span:nth-child(1) { transform: translateY(0);   opacity: 1; }
+.hamburger:not(.is-open) span:nth-child(2) { transform: translateY(0);   opacity: 1; }
+.hamburger:not(.is-open) span:nth-child(3) { transform: translateY(0);   opacity: 1; }
+
+/* === 可收合區塊（不留空白） === */
+.sidebar-section,
+.sidebar-bottom {
+  overflow: hidden;
+  transition: max-height .25s ease, padding .2s ease, margin .2s ease, opacity .2s ease;
+}
+.sidebar-section.show,
+.sidebar-bottom.show {
+  max-height: 1200px; /* 足夠大即可 */
+  opacity: 1;
+}
+.sidebar-section.hide,
+.sidebar-bottom.hide {
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+/* 中間撐開器，推底部到最底 */
+.grow { flex: 1 1 auto; }
+
+/* 導覽清單 */
+.nav-list { list-style: none; padding-left: 0; margin: 8px 0 0; }
+.nav-list li { margin-bottom: 8px; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #000;
+  transition: background-color .2s, color .2s;
+  cursor: pointer;
+}
+.nav-link:hover { background-color: #f0f0f0; }
+.nav-link.active { background-color: #d8d8d8; }
+
+.icon { width: 1.25em; text-align: center; }
+.label { white-space: nowrap; }
+
+/* === 收合寬度樣式（只顯示 icon，不留空白） === */
+.sidebar.collapsed { width: 60px; padding: 10px; }
+.sidebar.collapsed .sidebar-title { display: none; }
+
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding: 10px 8px;
+}
+.sidebar.collapsed .nav-link .label { display: none; }
+
+/* 手機：直接採窄側欄外觀 */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; padding: 10px; }
+  .sidebar .sidebar-title { display: none; }
+  .nav-link { justify-content: center; padding: 10px 8px; }
+  .nav-link .label { display: none; }
+}

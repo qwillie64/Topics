@@ -1,417 +1,286 @@
-/* ========================
-   1) 外層容器：.home-container
-   ======================== */
+/* ==========================================================================
+   Home 頁面版面：地圖滿版、上方搜尋列漂浮、底部卡片滑動
+   只調整樣式，不改任何 JSX 與 API
+   ========================================================================== */
+
+/* ---- 外層容器：右側主內容鋪滿，讓地圖可吃滿整個畫面 ---- */
 .home-container {
   display: flex;
-  height: 100vh;
   width: 100%;
-  overflow: hidden;          /* 防止子元素超出 */
-  background: #f7f7f7;       /* 與 index.css 背景一致 */
-}
-
-/* 讓搜尋欄與主內容的 dropdown 能溢出可見（必要時） */
-.search-bar {
-  overflow: visible;
-}
-.main-content {
-  height: 100vh;
-  overflow: auto;              /* ← 讓 Apply / Create 這些長頁能捲動 */
-  display: flex;
-  flex-direction: column;
-}
-
-/* 只有 Home 用這層包住，避免整頁跟著滾動 */
-.home-main {
-  height: 100%;
-  overflow: hidden;            /* ← 地圖區域內部自己管理捲動 */
-  display: flex;
-  flex-direction: column;
-}
-
-/* ========================
-   2) 側邊欄：.sidebar（含展開/收合）
-   ======================== */
-.sidebar {
-  width: 180px;
-  background-color: #fff;
-  padding: 10px;
-  position: relative;        /* 讓底部登入連結可絕對定位 */
-  transition: width 0.3s ease;
+  height: 100vh;        /* 視窗滿高 */
   overflow: hidden;
-  border-right: 1px solid #e8e8e8;
-  z-index: 1000;             /* 確保不被地圖覆蓋 */
+  background: #f7f7f7;  /* 地圖沒載入時的底色 */
 }
 
-/* 展開與收合寬度 */
-.sidebar.open { width: 200px; }
-.sidebar.collapsed { width: 60px; }
-
-/* ====== 2-1) 側邊欄標題區（含漢堡） ====== */
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  font-weight: bold;
-  font-size: 18px;
-  border-bottom: 1px solid #eee;
-}
-.sidebar-title { margin: 0; }
-.toggle-btn {
-  background: #f0f0f0;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  padding: 6px 10px;
-  border-radius: 6px;
-}
-
-/* ====== 2-2) 側邊欄內容展開/收合 ====== */
-.sidebar-content {
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.sidebar-content.show {
-  opacity: 1;
-  max-height: 1000px; /* 給動畫用 */
-}
-
-.sidebar-content.hide {
-  opacity: 0;
-  max-height: 0;
-  pointer-events: none; /* 收合時不能點擊 */
-}
-
-/* ====== 導覽清單 ====== */
-.nav-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 8px 0 0;
-  line-height: 2;
-}
-
-.nav-list li {
-  margin-bottom: 8px;
-}
-
-/* NavLink 撐滿整塊，整個區塊可點 */
-.nav-link {
-  display: block;
-  padding: 10px 14px;
-  border-radius: 6px;
-  text-decoration: none;
-  color: #000;
-  transition: background-color 0.2s, color 0.2s;
-  cursor: pointer;
-}
-
-/* hover 效果 */
-.nav-link:hover {
-  background-color: #f0f0f0;
-}
-
-/* active 樣式 */
-.nav-link.active {
-  background-color: #d8d8d8;
-}
-
-/* ====== 2-3) 側邊欄底部登入/註冊 ====== */
-.auth-links {
-  position: absolute;
-  bottom: 20px;
-  left: 10px;
-  font-size: 14px;
-  display: flex;
-  gap: 12px;
-}
-.auth-links a {
-  color: #000;
-  text-decoration: none;
-}
-
-/* ========================
-   Event Content Details
-   ======================== */
-.event-content-wrapper {
-  position: relative;
-}
-
-.event-content-text {
-  display: inline;
-}
-
-.event-content-summary {
-  display: inline;
-  cursor: default;
-}
-
-.event-content-summary:hover {
-  text-decoration: none;
-}
-
-.event-content-preview {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-word;
-  margin-bottom: 4px;
-}
-
-.event-content-summary::-webkit-details-marker {
-  display: none;
-}
-
-.event-content-expand,
-.event-content-collapse {
-  color: #9c9c9c;
-  cursor: pointer;
-  font-size: 14px;
-  user-select: none;
-  margin-left: 4px;
-  display: inline-block;
-}
-
-.event-content-full {
-  margin-top: 8px;
-  color: #000;
-}
-
-
-/* ========================
-   3) 主內容區域：.main-content
-   ======================== */
+/* ---- 主內容：不加內距，讓地圖可完全滿版 ---- */
 .main-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;        /* 給上方 search-bar 定位用 */
-  min-width: 0;              /* 防止 flex 子項超出 */
+  position: relative;   /* 讓搜尋列、卡片能 absolute 定位在此容器內 */
+  padding: 0;
+  overflow: hidden;     /* 隱藏多餘溢出 */
 }
 
-/* ========================
-   4) 搜尋欄：.search-bar（在地圖上方置中）
-   ======================== */
-.search-bar {
-  position: absolute;        /* 漂浮在地圖上 */
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;             /* 高於地圖 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-/* 單一搜尋輸入框 */
-.search-input {
-  font-size: 16px;
-  width: 300px;
-  height: 30px;
-  padding: 0 10px;
-  border: 1px solid #808080;
-  border-radius: 6px;
-  background: #fff;
-}
-
-/* 篩選按鈕群組容器（水平排列） */
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-  position: relative;
-  z-index: 1; /* 讓 dropdown 在地圖上方 */
-}
-
-/* 單一篩選區塊（包含按鈕與下拉） */
-.filter-group {
-  position: relative; /* 讓內部 dropdown 以此為定位參考 */
-}
-
-/* 篩選 pill-style 按鈕 */
-.filter-pill {
-  border: 1px solid #808080;
-  background-color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 6px;
-}
-.filter-pill:hover {
-  background-color: #fff;
-  border-color: #272727;
-}
-
-/* 下拉式選單容器 */
-.filter-dropdown {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  background: #fff;
-  border: 1px solid #7e7e7e;
-  z-index: 1001;
-  width: 100px;
-  padding: 6px;
-  border-radius: 6px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-/* 單一下拉選項 */
-.dropdown-option {
-  padding: 6px 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.dropdown-option:hover { background-color: #f5f7fa; }
-
-/* 日期選擇器 dropdown */
-.calendar-dropdown {
-  top: 40px;
-  position: absolute; 
-  width: auto; 
-  left: 0; 
-  z-index: 10; 
-  white-space: nowrap;
-}
-
-/* React DatePicker 的字體大小微調（其餘樣式走全域） */
-.react-datepicker {
-  font-size: 14px;
-}
-
-/* ========================
-   5) 地圖樣式：.map（佔滿中間區）
-   ======================== */
+/* ---- 地圖容器：鋪滿主內容（覆蓋 MapContainer inline 的 80vh） ---- */
 .map {
-  flex: 1;
+  position: absolute;
+  inset: 0;             /* top/right/bottom/left 全為 0 */
   width: 100%;
-  z-index: 1;                 /* 低於搜尋與卡片 */
+  height: 100% !important; /* 覆蓋 inline style */
+  border-radius: 0;
+  background: #e9eef3;
+  z-index: 0;           /* 地圖層級最底，避免遮住其他懸浮元素 */
 }
 
-/* 保險：強制 Leaflet 在較低層，避免遮住浮動元件 */
-.leaflet-container {
-  z-index: 1 !important;
-}
+/* ==========================================================================
+   搜尋列（上中漂浮）
+   結構：
+   <div class="search-bar">
+     <div class="search-input">[input+button]</div>
+     <div class="filters">…</div>
+   </div>
+   ========================================================================== */
 
-/* Tooltip 文字大小 */
-.leaflet-tooltip {
-  font-size: 14px !important;
-}
-
-/* ========================
-   6) 底部滑動卡片：.event-slider-container
-   ======================== */
-.event-slider-container {
-  position: absolute;         /* 懸浮在地圖底部中央 */
-  bottom: 20px;
+.search-bar {
+  position: absolute;
+  top: 24px;
   left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  z-index: 999;
+  transform: translateX(-50%);  /* 置中 */
+  z-index: 1000;                /* 高於地圖 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;                    /* 與下方篩選區的距離 */
+  pointer-events: none;         /* 讓地圖仍可拖曳；內部元素再打開事件 */
+}
+
+/* 內部元素恢復可點擊 */
+.search-bar * { pointer-events: auto; }
+
+/* 關鍵字輸入列（白底膠囊） */
+.search-input {
   display: flex;
   align-items: center;
+  gap: 10px;
+  min-width: 360px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+}
+.search-input input[type="text"] {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+}
+.search-input button {
+  border: none;
+  background: #2b7fff;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* 篩選列（橫向排列） */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
 }
 
-/* 6-1) 卡片滑軌（水平滾動） */
-.event-slider {
-  display: flex;
-  overflow-x: auto;
-  gap: 16px;
-  padding: 10px 20px;
-  border-radius: 12px;
-  width: 100%;
-  scrollbar-width: none;      /* Firefox 隱藏滾動條 */
+/* 篩選群組：作為 dropdown 的定位點 */
+.filter-group { position: relative; }
+
+/* 篩選觸發 pill */
+.filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-.event-slider::-webkit-scrollbar {
-  display: none;              /* Chrome/Edge 隱藏滾動條 */
+.filter-trigger:hover {
+  background: #f7f7f7;
+  border-color: #dcdcdc;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
 }
 
-/* 6-2) 左右箭頭（懸浮透明） */
+/* 下拉面板（Filter 與 DatePicker 都使用它） */
+.filter-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.15);
+  z-index: 1100; /* 🚩 高於搜尋列與卡片，避免被地圖吃掉 */
+  animation: dropdownIn .16s ease;
+}
+
+/* 面板內的行（select or datepicker 容器） */
+.panel-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* select 樣式微調 */
+.filter-panel select {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+}
+
+/* 面板底部：清除 / 完成 */
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.filter-actions button {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+.filter-actions button:hover { background: #f6f7f9; }
+.filter-actions button:last-child {
+  background: #2b7fff;         /* 主色系：與 toast 一致 */
+  color: #fff;
+  border-color: #2b7fff;
+}
+.filter-actions button:last-child:hover { filter: brightness(0.98); }
+
+/* 下拉進場小動畫 */
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 手機優化：讓面板不超出畫面右邊 */
+@media (max-width: 480px) {
+  .filter-panel {
+    left: auto;
+    right: 0;                   /* 右對齊觸發鈕，避免超出視窗 */
+    max-width: 88vw;
+  }
+  .search-input { min-width: 260px; }
+}
+
+/* ==========================================================================
+   底部卡片滑動（覆蓋在地圖下方）
+   結構：
+   <div class="event-slider-container">
+     <button class="slider-arrow left">…</button>
+     <div class="event-slider">[.event-card*]</div>
+     <button class="slider-arrow right">…</button>
+   </div>
+   ========================================================================== */
+
+.event-slider-container {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;                  /* 底部留白 */
+  transform: translateX(-50%);
+  z-index: 900;                  /* 低於搜尋列，但高於地圖 */
+  width: min(1200px, 96%);       /* 限制最大寬，避免太寬 */
+  padding: 10px 56px;            /* 給左右箭頭的空間 */
+  box-sizing: border-box;
+  pointer-events: none;          /* 讓地圖可拖；內部再開啟 */
+}
+.event-slider-container * { pointer-events: auto; }
+
+/* 橫向滑動容器 */
+.event-slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 1fr);
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+}
+
+/* 卡片 */
+.event-card {
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative; /* 讓收藏鈕定位 */
+}
+
+/* 卡片標題與資訊 */
+.event-name { font-size: 16px; font-weight: 700; }
+.event-info  { font-size: 13px; color: #666; line-height: 1.6; }
+
+/* 收藏星星按鈕（右上角） */
+.favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+.favorite-btn.favorited { color: #f5a623; }
+
+/* 卡片點亮效果（地圖點 Marker 時） */
+.highlight-card {
+  outline: 2px solid #2b7fff;
+  box-shadow: 0 0 0 4px rgba(43,127,255,0.15);
+  transition: box-shadow .2s;
+}
+
+/* 左右箭頭（浮在容器左右側） */
 .slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1000;
-  background: transparent;
   border: none;
-  font-size: 2rem;
-  color: #555;
+  background: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
   cursor: pointer;
-  transition: color 0.2s ease;
 }
-.slider-arrow:hover { color: #000; }
-.slider-arrow.left { left: -50px; }
-.slider-arrow.right { right: -50px; }
+.slider-arrow.left  { left: 8px; }
+.slider-arrow.right { right: 8px; }
 
-/* ========================
-   7) 單一活動卡片：.event-card
-   ======================== */
-.event-card {
-  width: 450px;
-  background-color: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  flex-shrink: 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e8e8e8;
-  cursor: pointer;            /* 可點擊（用於飛到地圖） */
-  position: relative;
+/* 更小的畫面：卡片寬度與箭頭位置微調 */
+@media (max-width: 1024px) {
+  .event-slider-container { width: 94%; padding: 10px 52px; }
 }
-
-/* 活動名稱 */
-.event-name {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 活動資訊（地址、日期、內容等） */
-.event-info {
-  margin-bottom: 4px;
-  font-size: 14px;
-  color: #444;
-}
-
-
-/* 收藏按鈕（卡片右上角的小星星） */
-.favorite-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  background: transparent;
-  font-size: 30px;
-  cursor: pointer;
-  color: #999;
-  transition: color 0.2s;
-}
-.favorite-btn.favorited { color: gold; }
-
-/* ========================
-   8) 卡片高亮動畫（Marker 點擊時）
-   ======================== */
-.highlight-card {
-  border: 2px solid #007bff;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-  transition: border 0.3s, box-shadow 0.3s;
-}
-
-/* ========================
-   9) RWD
-   ======================== */
 @media (max-width: 768px) {
-  .sidebar { width: 60px; }
-  .sidebar.open { width: 60px; }   /* 手機時以收合視覺為主 */
-  .event-slider-container { width: 95%; }
-  .slider-arrow.left { left: -36px; }
-  .slider-arrow.right { right: -36px; }
+  .event-slider-container { width: 92%; padding: 8px 48px; }
+  .slider-arrow.left { left: 4px; }
+  .slider-arrow.right { right: 4px; }
 }
