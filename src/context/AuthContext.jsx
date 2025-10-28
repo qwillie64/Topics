@@ -17,14 +17,15 @@ export function AuthProvider({ children }) {
     else localStorage.removeItem("auth:user");
   }, [user]);
 
-  const login = useCallback(async ({ email, password }) => {
-    // 不改你的 API，直接登入
-    const res = await apiLogin({ email, password });
+  const login = useCallback(async ({ account, password }) => {
+    // account 可能是 email 或使用者帳號，轉發給 API
+    const res = await apiLogin({ account, password });
+    const email = account;
     // 假設後端回 token 與使用者資料，你可依你的實際調整
     const emailVerified = res?.emailVerified !== false && res?.status !== "email_not_verified";
     const u = {
       id: res?.user?.id ?? res?.id,
-      name: res?.user?.name ?? res?.name ?? email.split("@")[0],
+      name: res?.user?.name ?? res?.name ?? (email ? email.split("@")[0] : account),
       email,
       emailVerified,
       token: res?.token,

@@ -10,7 +10,7 @@ export default function Login() {
   const { login } = useAuth();
   const { show } = useToast();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ account: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const onChange = (e) => {
@@ -22,8 +22,8 @@ export default function Login() {
     e.preventDefault();
 
     // 前端驗證失敗 → 用頂部 Toast 顯示
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email)) {
-      return show({ text: "請輸入有效 Email", duration: 4000 });
+    if (!form.account) {
+      return show({ text: "請輸入帳號", duration: 4000 });
     }
     if (!form.password || form.password.length < 6) {
       return show({ text: "請輸入至少 6 碼的密碼", duration: 4000 });
@@ -31,12 +31,12 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const u = await login({ email: form.email, password: form.password });
+  const u = await login({ account: form.account, password: form.password });
 
       // 尚未驗證 → 顯示提示並導向驗證頁
       if (!u.emailVerified) {
         show({
-          text: `你的帳號尚未驗證，已寄送驗證信至 ${form.email}`,
+    text: `你的帳號尚未驗證，已寄送驗證信至 ${form.account}`,
           actions: [{ label: "前往驗證頁", onClick: () => nav("/verify-email?status=failed") }],
           duration: 7000,
         });
@@ -51,7 +51,7 @@ export default function Login() {
       const msg = String(err?.message || "");
       if (/not\s*verified|未驗證/i.test(msg)) {
         show({
-          text: `你的帳號尚未驗證，已寄送驗證信至 ${form.email}`,
+    text: `你的帳號尚未驗證，已寄送驗證信至 ${form.account}`,
           actions: [{ label: "前往驗證頁", onClick: () => nav("/verify-email?status=failed") }],
           duration: 7000,
         });
@@ -75,16 +75,14 @@ export default function Login() {
 
         <form onSubmit={onSubmit}>
           <input
-            type="email"
-            name="email"
+            type="text"
+            name="account"
             className="input-field"
-            placeholder="電子郵件"
+            placeholder="帳號"
             required
-            value={form.email}
+            value={form.account}
             onChange={onChange}
             autoComplete="username"
-            pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
-            title="請輸入有效的 Email，例如 name@example.com"
           />
           <input
             type="password"

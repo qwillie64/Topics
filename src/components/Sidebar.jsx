@@ -48,7 +48,7 @@ export default function Sidebar({ isOpen = true, onToggle }) {
                 </NavLink>
               </li>
               <li>
-                <NavLink className="nav-link" to="/event/create">
+                <NavLink className="nav-link" to="/create">
                   <span className="icon">➕</span>
                   <span className="label">建立活動</span>
                 </NavLink>

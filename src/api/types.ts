@@ -43,7 +43,7 @@ export interface ApiErrorPayload {
 }
 
 export interface LoginRequest {
-  username: string;
+  account: string;
   password: string;
 }
 
